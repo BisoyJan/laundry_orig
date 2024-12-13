@@ -160,12 +160,12 @@ class Action
 		extract($_POST);
 		$data = " brand = '$brand_name' ";
 		$data .= ", category = '$category' ";
+		$data .= ", classification = '$classification' ";
 		$data .= ", size = '$size_value $size_unit' ";
 		$data .= ", price = '$price' ";
 
 		if (isset($id) && !empty($id)) {
 			$save = $this->db->query("UPDATE supply_list set " . $data . " where id=" . $id);
-
 		} else {
 			$save = $this->db->query("INSERT INTO supply_list set " . $data);
 		}

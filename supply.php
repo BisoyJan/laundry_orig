@@ -2,10 +2,10 @@
 
 <div class="container-fluid">
 
-	<div class="col-lg-12">
+	<div class="col-12">
 		<div class="row">
 			<!-- FORM Panel -->
-			<div class="col-md-4">
+			<div class="col-md-12 col-lg-4">
 				<form action="" id="manage-supply">
 					<div class="card">
 						<div class="card-header">
@@ -31,16 +31,24 @@
 								</select>
 							</div>
 							<div class="form-group">
+								<label class="control-label">Classification</label>
+								<select name="classification" id="classification" class="custom-select" required>
+									<option value="Fragrance">Fragrance</option>
+									<option value="Cleaning Agent">Cleaning Agent</option>
+									<option value="Sanitizer">Sanitizer</option>
+								</select>
+							</div>
+							<div class="form-group">
 								<label class="control-label">Size (Volume)</label>
 								<div class="row">
-									<div class="col-md-6">
+									<div class="col-6">
 										<select name="size_unit" id="size_unit" class="custom-select" required>
 											<option value="L">Liter (L)</option>
 											<option value="ml">Milliliter (mL)</option>
 											<option value="gal">Gallon (gal)</option>
 										</select>
 									</div>
-									<div class="col-md-6">
+									<div class="col-6">
 										<input type="number" step="any" name="size_value" id="size_value"
 											class="form-control" required>
 									</div>
@@ -50,14 +58,16 @@
 								<label class="control-label">Price</label>
 								<input type="number" step="any" name="price" id="price" class="form-control" required>
 							</div>
-						</div>
 
-						<div class="card-footer">
-							<div class="row">
-								<div class="col-md-12">
-									<button class="btn btn-sm btn-primary col-sm-3 offset-md-3"> Save</button>
-									<button class="btn btn-sm btn-default col-sm-3" type="button"
-										onclick="$('#manage-supply').get(0).reset()"> Cancel</button>
+							<div class="card-footer">
+								<div class="row">
+									<div class="col-6">
+										<button class="btn btn-sm btn-primary btn-block"> Save</button>
+									</div>
+									<div class="col-6">
+										<button class="btn btn-sm btn-default btn-block" type="button"
+											onclick="$('#manage-supply').get(0).reset()"> Cancel</button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -67,59 +77,57 @@
 			<!-- FORM Panel -->
 
 			<!-- Table Panel -->
-			<div class="col-md-8">
+			<div class="col-12 col-md-8">
 				<div class="card">
 					<div class="card-body">
-						<table class="table table-bordered table-hover">
-							<thead>
-								<tr>
-									<th class="text-center">#</th>
-									<th class="text-center">Brand Name</th>
-									<th class="text-center">Category</th>
-									<th class="text-center">Size</th>
-									<th class="text-center">Price</th>
-									<th class="text-center">Action</th>
-								</tr>
-							</thead>
-							<tbody>
-								<!-- Add your tbody content here -->
-								<?php
-								$i = 1;
-								$cats = $conn->query("SELECT * FROM supply_list order by id asc");
-								while ($row = $cats->fetch_assoc()):
-									?>
+						<div class="table-responsive">
+							<table class="table table-bordered table-striped">
+								<thead>
 									<tr>
-										<td class="text-center"><?php echo $i++ ?></td>
-										<td class="">
-											<p><b><?php echo $row['brand'] ?></b></p>
-										</td>
-										<td class="">
-											<p><b><?php echo $row['category'] ?></b></p>
-										</td>
-										<td class="">
-											<p><b><?php echo $row['size'] ?></b></p>
-										</td>
-										<td class="">
-											<p><b><?php echo $row['price'] ?></b></p>
-										</td>
-										<td class="text-center">
-											<button class="btn btn-sm btn-primary edit_supply" type="button"
-												data-id="<?php echo $row['id'] ?>" data-name="<?php echo $row['brand'] ?>"
-												data-category="<?php echo $row['category'] ?>"
-												data-price="<?php echo $row['price'] ?>">Edit</button>
-											<button class="btn btn-sm btn-danger delete_supply" type="button"
-												data-id="<?php echo $row['id'] ?>">Delete</button>
-										</td>
+										<th class="text-center">#</th>
+										<th class="text-center">Brand Name</th>
+										<th class="text-center">Category</th>
+										<th class="text-center">Classification</th>
+										<th class="text-center">Size</th>
+										<th class="text-center">Price</th>
+										<th class="text-center">Action</th>
 									</tr>
-								<?php endwhile; ?>
-							</tbody>
-						</table>
+								</thead>
+								<tbody>
+									<?php
+									$i = 1;
+									$inventory = $conn->query("SELECT id, brand, category, classification, size, price FROM supply_list;");
+									while ($row = $inventory->fetch_assoc()):
+										?>
+										<tr>
+											<td class="text-center"><?php echo $i++ ?></td>
+											<td><?php echo $row['brand'] ?></td>
+											<td><?php echo $row['category'] ?></td>
+											<td><?php echo $row['classification'] ?></td>
+											<td><?php echo $row['size'] ?></td>
+											<td class="text-right"><?php echo $row['price'] ?></td>
+											<td class="text-center">
+												<button type="button" class="btn btn-sm btn-outline-primary edit_supply"
+													data-id="<?php echo $row['id'] ?>"
+													data-name="<?php echo $row['brand'] ?>"
+													data-category="<?php echo $row['category'] ?>"
+													data-price="<?php echo $row['price'] ?>"><i class=" fa
+													fa-edit"></i></button>
+												<button type="button" class="btn btn-sm btn-outline-danger delete_stock"
+													data-id="<?php echo $row['id'] ?>"><i class="fa fa-trash"></i></button>
+											</td>
+										</tr>
+									<?php endwhile; ?>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
 			<!-- Table Panel -->
 		</div>
 	</div>
+
 
 </div>
 <style>
@@ -139,6 +147,7 @@
 		var id = $('#id').val();
 		var brand_name = $('#brand_name').val();
 		var category = $('#category').val();
+		var classification = $('#classification').val();
 		var size_unit = $('#size_unit').val();
 		var size_value = $('#size_value').val();
 		var price = $('#price').val();
@@ -148,6 +157,7 @@
 				id: id,
 				brand_name: brand_name,
 				category: category,
+				classification: classification,
 				size_unit: size_unit,
 				size_value: size_value,
 				price: price
@@ -178,6 +188,7 @@
 		cat.find("[name='id']").val($(this).attr('data-id'))
 		cat.find("[name='brand_name']").val($(this).attr('data-name'))
 		cat.find("[name='category']").val($(this).attr('data-category'))
+		cat.find("[name='classification']").val($(this).attr('data-classification'))
 		cat.find("[name='size_unit']").val($(this).attr('data-size-unit'))
 		cat.find("[name='size_value']").val($(this).attr('data-size-value'))
 		cat.find("[name='price']").val($(this).attr('data-price'))
