@@ -20,7 +20,6 @@
 							<div class="form-group">
 								<label class="control-label">Category</label>
 								<select name="category" id="category" class="custom-select" required>
-									<option value="">Select Category</option>
 									<option value="Laundry Soaps">Laundry Soaps</option>
 									<option value="Alkaline Builder Detergent">Alkaline Builder Detergent</option>
 									<option value="Laundry Destainer">Laundry Destainer</option>
@@ -30,6 +29,22 @@
 									<option value="Fabric Softener">Fabric Softener</option>
 									<option value="Laundry Emulsifier">Laundry Emulsifier</option>
 								</select>
+							</div>
+							<div class="form-group">
+								<label class="control-label">Size (Volume)</label>
+								<div class="row">
+									<div class="col-md-6">
+										<select name="size_unit" id="size_unit" class="custom-select" required>
+											<option value="L">Liter (L)</option>
+											<option value="ml">Milliliter (mL)</option>
+											<option value="gal">Gallon (gal)</option>
+										</select>
+									</div>
+									<div class="col-md-6">
+										<input type="number" step="any" name="size_value" id="size_value"
+											class="form-control" required>
+									</div>
+								</div>
 							</div>
 							<div class="form-group">
 								<label class="control-label">Price</label>
@@ -61,6 +76,7 @@
 									<th class="text-center">#</th>
 									<th class="text-center">Brand Name</th>
 									<th class="text-center">Category</th>
+									<th class="text-center">Size</th>
 									<th class="text-center">Price</th>
 									<th class="text-center">Action</th>
 								</tr>
@@ -79,6 +95,9 @@
 										</td>
 										<td class="">
 											<p><b><?php echo $row['category'] ?></b></p>
+										</td>
+										<td class="">
+											<p><b><?php echo $row['size'] ?></b></p>
 										</td>
 										<td class="">
 											<p><b><?php echo $row['price'] ?></b></p>
@@ -120,6 +139,8 @@
 		var id = $('#id').val();
 		var brand_name = $('#brand_name').val();
 		var category = $('#category').val();
+		var size_unit = $('#size_unit').val();
+		var size_value = $('#size_value').val();
 		var price = $('#price').val();
 		$.ajax({
 			url: 'ajax.php?action=save_supply',
@@ -127,6 +148,8 @@
 				id: id,
 				brand_name: brand_name,
 				category: category,
+				size_unit: size_unit,
+				size_value: size_value,
 				price: price
 			},
 			type: 'POST',
@@ -155,6 +178,8 @@
 		cat.find("[name='id']").val($(this).attr('data-id'))
 		cat.find("[name='brand_name']").val($(this).attr('data-name'))
 		cat.find("[name='category']").val($(this).attr('data-category'))
+		cat.find("[name='size_unit']").val($(this).attr('data-size-unit'))
+		cat.find("[name='size_value']").val($(this).attr('data-size-value'))
 		cat.find("[name='price']").val($(this).attr('data-price'))
 		end_load()
 	})
