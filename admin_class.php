@@ -153,19 +153,25 @@ class Action
 		$delete = $this->db->query("DELETE FROM laundry_categories where id = " . $id);
 		if ($delete)
 			return 1;
+
 	}
 	function save_supply()
 	{
 		extract($_POST);
-		$data = " name = '$name' ";
-		if (empty($id)) {
-			$save = $this->db->query("INSERT INTO supply_list set " . $data);
-		} else {
+		$data = " brand = '$brand_name' ";
+		$data .= ", category = '$category' ";
+		$data .= ", price = '$price' ";
+
+		if (isset($id) && !empty($id)) {
 			$save = $this->db->query("UPDATE supply_list set " . $data . " where id=" . $id);
-		}
-		if ($save)
 			return 1;
+		} else {
+			$save = $this->db->query("INSERT INTO supply_list set " . $data);
+			return 2;
+		}
 	}
+
+
 	function delete_supply()
 	{
 		extract($_POST);
