@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 23, 2020 at 09:16 AM
--- Server version: 10.4.14-MariaDB
--- PHP Version: 7.2.33
+-- Generation Time: Dec 13, 2024 at 02:09 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -33,7 +33,7 @@ CREATE TABLE `inventory` (
   `qty` int(30) NOT NULL,
   `stock_type` tinyint(1) NOT NULL COMMENT '1= in , 2 = used',
   `date_created` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `inventory`
@@ -41,8 +41,7 @@ CREATE TABLE `inventory` (
 
 INSERT INTO `inventory` (`id`, `supply_id`, `qty`, `stock_type`, `date_created`) VALUES
 (1, 1, 20, 1, '2020-09-23 14:08:04'),
-(2, 2, 10, 1, '2020-09-23 14:08:14'),
-(3, 3, 20, 1, '2020-09-23 14:09:29');
+(2, 10, 10, 1, '2020-09-23 14:08:14');
 
 -- --------------------------------------------------------
 
@@ -54,7 +53,7 @@ CREATE TABLE `laundry_categories` (
   `id` int(30) NOT NULL,
   `name` text NOT NULL,
   `price` double NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `laundry_categories`
@@ -77,7 +76,7 @@ CREATE TABLE `laundry_items` (
   `laundry_id` int(30) NOT NULL,
   `unit_price` double NOT NULL,
   `amount` double NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `laundry_items`
@@ -103,7 +102,7 @@ CREATE TABLE `laundry_list` (
   `amount_change` double NOT NULL,
   `remarks` text NOT NULL,
   `date_created` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `laundry_list`
@@ -121,17 +120,22 @@ INSERT INTO `laundry_list` (`id`, `customer_name`, `status`, `queue`, `total_amo
 
 CREATE TABLE `supply_list` (
   `id` int(30) NOT NULL,
-  `name` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `brand` text NOT NULL,
+  `category` varchar(100) NOT NULL,
+  `classification` varchar(100) NOT NULL,
+  `size` varchar(120) NOT NULL,
+  `price` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `supply_list`
 --
 
-INSERT INTO `supply_list` (`id`, `name`) VALUES
-(1, 'Fabric Detergent'),
-(2, 'Fabric Conditioner'),
-(3, 'Baking Soda');
+INSERT INTO `supply_list` (`id`, `brand`, `category`, `classification`, `size`, `price`) VALUES
+(1, 'Downy', 'Fabric Softener', '', '120 L', 120),
+(2, 'Tide', 'Laundry Soaps', 'Fragrance', '20 ml', 5301),
+(10, 'Tide', 'Laundry Soaps', 'Cleaning Agent', '20 L', 530),
+(11, 'Tide', 'Laundry Soaps', 'Fragrance', '2 L', 53012);
 
 -- --------------------------------------------------------
 
@@ -145,7 +149,7 @@ CREATE TABLE `users` (
   `username` varchar(100) NOT NULL,
   `password` varchar(200) NOT NULL,
   `type` tinyint(1) NOT NULL DEFAULT 2 COMMENT '1=admin , 2 = staff'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
@@ -227,7 +231,7 @@ ALTER TABLE `laundry_list`
 -- AUTO_INCREMENT for table `supply_list`
 --
 ALTER TABLE `supply_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `users`
