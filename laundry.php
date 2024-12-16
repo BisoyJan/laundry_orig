@@ -121,7 +121,7 @@ if (isset($_GET['id'])) {
 	function printReceipt(id) {
 		// Fetch data for the receipt based on the passed ID
 		$.ajax({
-			url: 'get_receipt_data.php', // Create this PHP file to fetch data based on ID
+			url: 'get_receipt_data.php',
 			method: 'GET',
 			data: { id: id },
 			success: function (response) {
@@ -165,8 +165,6 @@ if (isset($_GET['id'])) {
 			}
 		});
 	}
-
-
 
 	$('#new_laundry').click(function () {
 		uni_modal('New Laundry', 'manage_laundry.php', 'mid-large')
