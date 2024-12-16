@@ -186,6 +186,7 @@ class Action
 	{
 		extract($_POST);
 		$data = " customer_name = '$customer_name' ";
+		$data .= ", phone = '$phone' ";
 		$data .= ", remarks = '$remarks' ";
 		$data .= ", total_amount = '$tamount' ";
 		$data .= ", amount_tendered = '$tendered' ";

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 13, 2024 at 02:09 PM
+-- Generation Time: Dec 16, 2024 at 04:38 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,17 +31,18 @@ CREATE TABLE `inventory` (
   `id` int(30) NOT NULL,
   `supply_id` int(30) NOT NULL,
   `qty` int(30) NOT NULL,
-  `stock_type` tinyint(1) NOT NULL COMMENT '1= in , 2 = used',
-  `date_created` datetime NOT NULL DEFAULT current_timestamp()
+  `used` int(11) NOT NULL,
+  `date_created` datetime NOT NULL DEFAULT current_timestamp(),
+  `date_updated` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `inventory`
 --
 
-INSERT INTO `inventory` (`id`, `supply_id`, `qty`, `stock_type`, `date_created`) VALUES
-(1, 1, 20, 1, '2020-09-23 14:08:04'),
-(2, 10, 10, 1, '2020-09-23 14:08:14');
+INSERT INTO `inventory` (`id`, `supply_id`, `qty`, `used`, `date_created`, `date_updated`) VALUES
+(14, 1, 273, 50, '2024-12-14 11:44:57', '2024-12-16 10:15:31'),
+(17, 12, 37, 3, '2024-12-16 09:20:33', '2024-12-16 09:20:54');
 
 -- --------------------------------------------------------
 
@@ -83,7 +84,8 @@ CREATE TABLE `laundry_items` (
 --
 
 INSERT INTO `laundry_items` (`id`, `laundry_category_id`, `weight`, `laundry_id`, `unit_price`, `amount`) VALUES
-(4, 3, 10, 4, 25, 250);
+(4, 3, 10, 4, 25, 250),
+(6, 1, 2, 6, 30, 60);
 
 -- --------------------------------------------------------
 
@@ -94,6 +96,7 @@ INSERT INTO `laundry_items` (`id`, `laundry_category_id`, `weight`, `laundry_id`
 CREATE TABLE `laundry_list` (
   `id` int(30) NOT NULL,
   `customer_name` text NOT NULL,
+  `phone` int(11) NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0=Pending, 1 = ongoing,2= ready,3= claimed',
   `queue` int(30) NOT NULL,
   `total_amount` double NOT NULL,
@@ -108,9 +111,9 @@ CREATE TABLE `laundry_list` (
 -- Dumping data for table `laundry_list`
 --
 
-INSERT INTO `laundry_list` (`id`, `customer_name`, `status`, `queue`, `total_amount`, `pay_status`, `amount_tendered`, `amount_change`, `remarks`, `date_created`) VALUES
-(2, 'James Smith', 3, 1, 555, 1, 555, 0, 'None', '2020-09-23 11:54:47'),
-(4, 'Claire Blake', 3, 1, 250, 1, 500, 250, 'None', '2020-09-23 13:29:33');
+INSERT INTO `laundry_list` (`id`, `customer_name`, `phone`, `status`, `queue`, `total_amount`, `pay_status`, `amount_tendered`, `amount_change`, `remarks`, `date_created`) VALUES
+(4, 'Claire Blake', 0, 3, 1, 250, 1, 500, 250, 'None', '2020-09-23 13:29:33'),
+(6, 'Intong', 0, 0, 1, 60, 0, 0, -60, '', '2024-12-16 11:34:55');
 
 -- --------------------------------------------------------
 
@@ -132,10 +135,9 @@ CREATE TABLE `supply_list` (
 --
 
 INSERT INTO `supply_list` (`id`, `brand`, `category`, `classification`, `size`, `price`) VALUES
-(1, 'Downy', 'Fabric Softener', '', '120 L', 120),
-(2, 'Tide', 'Laundry Soaps', 'Fragrance', '20 ml', 5301),
+(1, 'Downy', 'Alkaline Builder Detergent', 'Fragrance', '20 L', 120),
 (10, 'Tide', 'Laundry Soaps', 'Cleaning Agent', '20 L', 530),
-(11, 'Tide', 'Laundry Soaps', 'Fragrance', '2 L', 53012);
+(12, 'Pride', 'Laundry Soaps', 'Cleaning Agent', '20 L', 300);
 
 -- --------------------------------------------------------
 
@@ -207,7 +209,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `laundry_categories`
@@ -219,19 +221,19 @@ ALTER TABLE `laundry_categories`
 -- AUTO_INCREMENT for table `laundry_items`
 --
 ALTER TABLE `laundry_items`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `laundry_list`
 --
 ALTER TABLE `laundry_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `supply_list`
 --
 ALTER TABLE `supply_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `users`
