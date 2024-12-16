@@ -15,23 +15,24 @@
 								<th class="text-center">Stock Available</th>
 							</thead>
 							<tbody>
+
 								<?php
 								$i = 1;
-								$supply = $conn->query("SELECT * FROM supply_list order by brand asc");
-								while ($row = $supply->fetch_assoc()):
-									$sup_arr[$row['id']] = $row['brand'];
-									$inn = $conn->query("SELECT sum(qty) as inn FROM inventory where stock_type = 1 and supply_id = " . $row['id']);
-									$inn = $inn && $inn->num_rows > 0 ? $inn->fetch_array()['inn'] : 0;
-									$out = $conn->query("SELECT sum(qty) as `out` FROM inventory where stock_type = 2 and supply_id = " . $row['id']);
-									$out = $out && $out->num_rows > 0 ? $out->fetch_array()['out'] : 0;
-									$available = $inn - $out;
+								$supplyQuery = "SELECT inventory.id, inventory.qty, inventory.used, supply_list.brand, supply_list.category, supply_list.price, supply_list.classification FROM inventory JOIN supply_list ON inventory.supply_id = supply_list.id order by inventory.id desc";
+
+								$supplyResult = $conn->query($supplyQuery);
+
+								while ($row = $supplyResult->fetch_assoc()):
 									?>
 									<tr>
 										<td class="text-center"><?php echo $i++ ?></td>
-										<td class=""><?php echo $row['brand'] ?></td>
-										<td class="text-right"><?php echo $available ?></td>
+										<td class="">
+											<?php echo $row['brand'] . " - " . $row['category'] . " / " . $row['classification'] ?>
+										</td>
+										<td class="text-right"><?php echo $row['qty'] ?></td>
 									</tr>
 								<?php endwhile; ?>
+
 							</tbody>
 						</table>
 					</div>
@@ -40,7 +41,7 @@
 			<div class="col-md-7">
 				<div class="card">
 					<div class="card-header">
-						Supply In/Out List
+						<b>Supply In-used List</b>
 						<button class="btn btn-primary btn-sm float-right" id="manage-supply">Manage Supply</button>
 					</div>
 					<div class="card-body">
@@ -48,27 +49,28 @@
 							<thead>
 								<th class="text-center">Date</th>
 								<th class="text-center">Supply Name</th>
-								<th class="text-center">Price</th>
-								<th class="text-center">Qty</th>
-								<th class="text-center">Type</th>
-								<th class="text-center"></th>
+								<th class="text-center">Price/Item</th>
+								<th class="text-center">Used</th>
+								<th class="text-center">Action</th>
 							</thead>
 							<tbody>
 								<?php
 								$i = 1;
-								$inventory = $conn->query("SELECT inventory.id, inventory.qty, inventory.stock_type, supply_list.brand, supply_list.category, supply_list.price FROM inventory JOIN supply_list ON inventory.supply_id = supply_list.id order by inventory.id desc");
+								$inventory = $conn->query("SELECT inventory.id, inventory.qty, inventory.used, supply_list.brand, supply_list.category, supply_list.price, supply_list.classification FROM inventory JOIN supply_list ON inventory.supply_id = supply_list.id order by inventory.id desc");
 								while ($row = $inventory->fetch_assoc()):
 									?>
 									<tr>
 										<td class="text-center"><?php echo $i++ ?></td>
-										<td class=""><?php echo $row['brand'] . ' - ' . $row['category'] ?></td>
+										<td class="">
+											<?php echo $row['brand'] . ' - ' . $row['category'] . ' / ' . $row['classification'] ?>
+										</td>
 										<td class="text-right"><?php echo number_format($row['price'], 2) ?></td>
-										<td class="text-right"><?php echo $row['qty'] ?></td>
-										<?php if ($row['stock_type'] == 1): ?>
+										<td class="text-right"><?php echo $row['used'] ?></td>
+										<!-- <?php if ($row['stock_type'] == 1): ?>
 											<td class="text-center"><span class="badge badge-primary"> IN </span></td>
 										<?php else: ?>
 											<td class="text-center"><span class="badge badge-secondary"> Used </span></td>
-										<?php endif; ?>
+										<?php endif; ?>  -->
 										<td>
 											<button type="button" class="btn btn-sm btn-outline-primary edit_stock"
 												data-id="<?php echo $row['id'] ?>"><i class="fa fa-edit"></i></button>

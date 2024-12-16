@@ -309,20 +309,64 @@ class Action
 		if ($delete && $delete2)
 			return 1;
 	}
+
 	function save_inv()
 	{
 		extract($_POST);
-		$data = " supply_id = '$supply_id' ";
-		$data .= ", qty = '$qty' ";
-		$data .= ", stock_type = '$stock_type' ";
-		if (empty($id)) {
-			$save = $this->db->query("INSERT INTO inventory set " . $data);
-		} else {
-			$save = $this->db->query("UPDATE inventory set " . $data . " where id=" . $id);
+
+		// Validate required fields
+		if (empty($supply_id) || empty($stock_type) || (!isset($qty) && !isset($used))) {
+			return "Error: Missing required fields.";
 		}
-		if ($save)
+
+		// Escape variables for safety
+		$supply_id = $this->db->real_escape_string($supply_id);
+		$stock_type = $this->db->real_escape_string($stock_type);
+		$qty = isset($qty) ? $this->db->real_escape_string($qty) : 0;
+		$used = isset($used) ? $this->db->real_escape_string($used) : 0;
+
+		// Escape `id` if provided
+		$id = $this->db->real_escape_string($id);
+
+		// Check if the inventory record exists
+		$checkResult = $this->db->query("SELECT * FROM inventory WHERE id = '$id' or supply_id = '$supply_id'");
+		if (!$checkResult) {
+			return "Error: " . $this->db->error;
+		}
+
+		$checkRow = $checkResult->fetch_assoc();
+
+		if ($checkRow) {
+			// Update existing record
+			if ($stock_type == 2) { // Stock out
+				$newUsed = $checkRow['used'] + $used;
+				$newQty = $checkRow['qty'] - $used;
+			} else { // Stock in
+				$newQty = $checkRow['qty'] + $qty;
+				$newUsed = $checkRow['used'];
+			}
+
+			$query = "UPDATE inventory SET 
+                        supply_id = '$supply_id',
+                        qty = '$newQty',
+                        used = '$newUsed',
+                        date_updated = NOW() 
+                      WHERE id = '$id'";
+		} else {
+			// Insert new data if `id` does not exist
+			$query = "INSERT INTO inventory (supply_id, qty, used, date_updated) 
+                      VALUES ('$supply_id', '$qty', '$used', NOW())";
+		}
+
+		// Execute query and return result
+		if ($this->db->query($query)) {
 			return 1;
+		} else {
+			return "Error: " . $this->db->error;
+		}
 	}
+
+
 	function delete_inv()
 	{
 		extract($_POST);

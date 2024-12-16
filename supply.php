@@ -81,7 +81,7 @@
 				<div class="card">
 					<div class="card-body">
 						<div class="table-responsive">
-							<table class="table table-bordered table-striped">
+							<table class="table table-bordered">
 								<thead>
 									<tr>
 										<th class="text-center">#</th>
@@ -110,10 +110,11 @@
 												<button type="button" class="btn btn-sm btn-outline-primary edit_supply"
 													data-id="<?php echo $row['id'] ?>"
 													data-name="<?php echo $row['brand'] ?>"
+													data-classification="<?php echo $row['classification'] ?>"
 													data-category="<?php echo $row['category'] ?>"
 													data-price="<?php echo $row['price'] ?>"><i class=" fa
 													fa-edit"></i></button>
-												<button type="button" class="btn btn-sm btn-outline-danger delete_stock"
+												<button type="button" class="btn btn-sm btn-outline-danger delete_supply"
 													data-id="<?php echo $row['id'] ?>"><i class="fa fa-trash"></i></button>
 											</td>
 										</tr>
@@ -140,7 +141,6 @@
 	}
 </style>
 <script>
-
 	$('#manage-supply').submit(function (e) {
 		e.preventDefault()
 		start_load()

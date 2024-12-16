@@ -19,14 +19,21 @@ if (isset($_GET['id'])) {
 					$supply = $conn->query("SELECT * FROM supply_list order by brand asc");
 					while ($row = $supply->fetch_assoc()):
 						?>
-						<option value="<?php echo $row['id'] ?>" <?php echo isset($supply_id) && $supply_id == $row['id'] ? "selected" : '' ?>><?php echo $row['brand'] ?> - <?php echo $row['category'] ?></option>
+						<option value="<?php echo $row['id'] ?>" <?php echo isset($supply_id) && $supply_id == $row['id'] ? "selected" : '' ?>><?php echo $row['brand'] ?> -
+							<?php echo $row['category'] ?>/<?php echo $row['classification'] ?>
+						</option>
 					<?php endwhile; ?>
 				</select>
 			</div>
 			<div class="form-group">
-				<label for="" class="control-label">QTY</label>
+				<label for="" class="control-label">Quantity</label>
 				<input type="number" step="any" min="1" value="<?php echo isset($qty) ? $qty : 1 ?>"
 					class="form-control text-right" name="qty">
+			</div>
+			<div class="form-group">
+				<label for="" class="control-label">In used</label>
+				<input type="number" step="any" min="1" value="<?php echo isset($used) ? $used : 0 ?>"
+					class="form-control text-right" name="used">
 			</div>
 			<div class="form-group">
 				<label for="" class="control-label">Type</label>
@@ -44,10 +51,21 @@ if (isset($_GET['id'])) {
 	$('#manage-inv').submit(function (e) {
 		e.preventDefault()
 		start_load()
+		var id = $('[name="id"]').val()
+		var supply_id = $('[name="supply_id"]').val()
+		var qty = $('[name="qty"]').val()
+		var used = $('[name="used"]').val()
+		var stock_type = $('[name="stock_type"]').val()
 		$.ajax({
 			url: 'ajax.php?action=save_inv',
 			method: 'POST',
-			data: $(this).serialize(),
+			data: {
+				id: id,
+				supply_id: supply_id,
+				qty: qty,
+				used: used,
+				stock_type: stock_type
+			},
 			success: function (resp) {
 				if (resp == 1) {
 					alert_toast("Data successfully saved", 'success')
@@ -59,4 +77,26 @@ if (isset($_GET['id'])) {
 		})
 
 	})
+	$(document).ready(function () {
+		var stockType = $('[name="stock_type"]').val();
+		if (stockType == 1) {
+			$('[name="qty"]').attr('disabled', false);
+			$('[name="used"]').attr('disabled', true);
+		} else {
+			$('[name="qty"]').attr('disabled', true);
+			$('[name="used"]').attr('disabled', false);
+		}
+	});
+
+	$('#manage-inv').on('change', '[name="stock_type"]', function () {
+		var stockType = $(this).val();
+		if (stockType == 1) {
+			$('[name="qty"]').attr('disabled', false);
+			$('[name="used"]').attr('disabled', true);
+		} else {
+			$('[name="qty"]').attr('disabled', true);
+			$('[name="used"]').attr('disabled', false);
+		}
+	});
+
 </script>
