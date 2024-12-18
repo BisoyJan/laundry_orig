@@ -64,7 +64,7 @@
 										<td class="">
 											<?php echo $row['brand'] . ' - ' . $row['category'] . ' / ' . $row['classification'] ?>
 										</td>
-										<td class="text-right"><?php echo number_format($row['price'], 2) ?></td>
+										<td class="text-right">₱ <?php echo number_format($row['price'], 2) ?></td>
 										<td class="text-right"><?php echo $row['used'] ?></td>
 										<!-- <?php if ($row['stock_type'] == 1): ?>
 											<td class="text-center"><span class="badge badge-primary"> IN </span></td>

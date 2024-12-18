@@ -10,7 +10,31 @@ if (isset($_GET['id'])) {
 
     // Fetch the laundry items
     $items = [];
-    $itemQuery = $conn->query("SELECT * FROM laundry_items WHERE laundry_id = $id");
+
+    $itemQuery = $conn->query("SELECT 
+                ll.id AS laundry_id,
+                ll.customer_name,
+                ll.phone,
+                ll.status,
+                ll.queue,
+                ll.total_amount,
+                li.id AS laundry_item_id,
+                li.weight,
+                li.unit_price,
+                li.amount,
+                lc.id AS category_id,
+                lc.name AS category_name,
+                lc.price AS category_price
+            FROM 
+                laundry_list ll
+            JOIN 
+                laundry_items li ON ll.id = li.laundry_id
+            JOIN 
+                laundry_categories lc ON li.laundry_category_id = lc.id
+            WHERE 
+                ll.id = $id");
+    //$itemQuery = $conn->query("SELECT * FROM laundry_items WHERE laundry_id = $id");
+
     while ($item = $itemQuery->fetch_assoc()) {
         $items[] = $item;
     }

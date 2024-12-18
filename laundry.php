@@ -101,9 +101,9 @@ if (isset($_GET['id'])) {
 			</table>
 
 			<div style="margin-top: 20px; text-align: right;">
-				<p><strong>Total Amount:</strong> <span id="total_amount" style="font-weight: normal;"></span></p>
-				<p><strong>Cash Tendered:</strong> <span id="amount_tendered" style="font-weight: normal;"></span></p>
-				<p><strong>Change:</strong> <span id="amount_change" style="font-weight: normal;"></span></p>
+				<p><strong>Total Amount: ₱</strong> <span id="total_amount" style="font-weight: normal;"></span></p>
+				<p><strong>Cash Tendered: ₱</strong> <span id="amount_tendered" style="font-weight: normal;"></span></p>
+				<p><strong>Change: ₱</strong> <span id="amount_change" style="font-weight: normal;"></span></p>
 			</div>
 
 			<div style="text-align: center; margin-top: 30px; border-top: 2px solid #333; padding-top: 10px;">
@@ -146,10 +146,10 @@ if (isset($_GET['id'])) {
 				// Add each laundry item to the receipt
 				data.items.forEach(function (item) {
 					var row = '<tr>' +
-						'<td style="padding: 8px;">' + item.category + '</td>' +
-						'<td style="padding: 8px;">' + item.load + '</td>' +
-						'<td style="padding: 8px;">' + item.unit_price + '</td>' +
-						'<td style="padding: 8px;">' + item.amount + '</td>' +
+						'<td style="padding: 8px;">' + item.category_name + '</td>' +
+						'<td style="padding: 8px;">' + item.weight + '</td>' +
+						'<td style="padding: 8px;">₱ ' + item.unit_price + '</td>' +
+						'<td style="padding: 8px;">₱ ' + item.amount + '</td>' +
 						'</tr>';
 					receiptItems.innerHTML += row;
 				});

@@ -105,7 +105,7 @@
 											<td><?php echo $row['category'] ?></td>
 											<td><?php echo $row['classification'] ?></td>
 											<td><?php echo $row['size'] ?></td>
-											<td class="text-right"><?php echo $row['price'] ?></td>
+											<td class="text-right">₱ <?php echo $row['price'] ?></td>
 											<td class="text-center">
 												<button type="button" class="btn btn-sm btn-outline-primary edit_supply"
 													data-id="<?php echo $row['id'] ?>"
