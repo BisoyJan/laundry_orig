@@ -57,7 +57,6 @@ if (isset($_GET['id'])) {
 						class="form-control"><?php echo isset($remarks) ? $remarks : '' ?></textarea>
 				</div>
 			</div>
-
 			<hr>
 
 			<!-- Laundry Category & Load -->
@@ -88,6 +87,34 @@ if (isset($_GET['id'])) {
 
 				<div class="col-md-4">
 					<div class="form-group">
+						<label for="inventory_id" class="control-label">Detergent Brand</label>
+						<select name="inventory_id" id="inventory_id" class="custom-select browser-default">
+							<option value="">Select Brand</option>
+							<?php
+							$inv = $conn->query("SELECT inventory.id, inventory.qty, inventory.used, supply_list.brand, supply_list.category, supply_list.price, supply_list.classification, supply_list.size, supply_list.id as supply_list_id FROM inventory JOIN supply_list ON inventory.supply_id = supply_list.id ORDER BY inventory.id DESC");
+							while ($row = $inv->fetch_assoc()):
+								?>
+								<option value="<?php echo $row['id']; ?>" data-price="<?php echo $row['price']; ?>"
+									data-size="<?php echo $row['size']; ?>">
+									<?php echo $row['brand'] . " / " . $row['classification']; ?>
+								</option>
+							<?php endwhile; ?>
+
+						</select>
+					</div>
+				</div>
+
+				<div class="col-md-5">
+					<div class="form-group">
+						<label for="detergent_20ml_price" class="control-label">Product Unit Price per 20ml/Load</label>
+						<input type="hidden" name="detergent_20ml_price">
+						<input type="number" step="any" value="0" class="form-control text-right"
+							id="detergent_20ml_price" readonly>
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="form-group">
 						<label for="" class="control-label">&nbsp;</label>
 						<button class="btn btn-info btn-sm btn-block" type="button" id="add_to_list"><i
 								class="fa fa-plus"></i> Add to List</button>
@@ -109,6 +136,8 @@ if (isset($_GET['id'])) {
 						<tr>
 							<th class="text-center">Category</th>
 							<th class="text-center">Load</th>
+							<th class="text-center">Product</th> <!-- show the product name -->
+							<th class="text-center">Product price</th> <!-- show product price -->
 							<th class="text-center">Unit Price</th>
 							<th class="text-center">Amount</th>
 							<th class="text-center"></th>
@@ -147,7 +176,7 @@ if (isset($_GET['id'])) {
 					</tbody>
 					<tfoot>
 						<tr>
-							<th class="text-right" colspan="3"></th>
+							<th class="text-right" colspan="5">Total Amount</th>
 							<th class="text-right" id="tamount"></th>
 							<th class="text-right"></th>
 						</tr>
@@ -247,10 +276,13 @@ if (isset($_GET['id'])) {
 		var price = $('#laundry_category_id option[value="' + cat + '"]').attr('data-price');
 		var cname = $('#laundry_category_id option[value="' + cat + '"]').html();
 		var amount = parseFloat(price) * parseFloat(_weight);
+		var productBrand = $('#inventory_id option[value="' + $('#inventory_id').val() + '"]').html(); // get the product brand
 		var tr = $('<tr></tr>');
 		tr.attr('data-id', cat)
 		tr.append('<input type="hidden" name="item_id[]" id="" value=""><td class=""><input type="hidden" name="laundry_category_id[]" id="" value="' + cat + '">' + cname + '</td>')
 		tr.append('<td><input type="number" class="text-center" name="weight[]" id="" value="' + _weight + '"></td>')
+		tr.append('<td class="text-center"><input type="hidden" name="inventory_id[]" id="" value="' + $('#inventory_id').val() + '">' + productBrand + '</td>')
+		tr.append('<td class="text-center"><input type="hidden" name="product_id[]" id="" value="' + $('#detergent_20ml_price').val() + '">' + $('#detergent_20ml_price').val() + '</td>')
 		tr.append('<td class="text-right"><input type="hidden" name="unit_price[]" id="" value="' + price + '">' + (parseFloat(price).toLocaleString('en-US', { style: 'decimal', maximumFractionDigits: 2, minimumFractionDigits: 2 })) + '</td>')
 		tr.append('<td class="text-right"><input type="hidden" name="amount[]" id="" value="' + amount + '"><p>' + (parseFloat(amount).toLocaleString('en-US', { style: 'decimal', maximumFractionDigits: 2, minimumFractionDigits: 2 })) + '</p></td>')
 		tr.append('<td><button class="btn btn-sm btn-danger" type="button" onclick="rem_list($(this))"><i class="fa fa-times"></i></button></td>')
@@ -277,7 +309,9 @@ if (isset($_GET['id'])) {
 			var _this = $(this)
 			var weight = _this.find('[name="weight[]"]').val()
 			var unit_price = _this.find('[name="unit_price[]"]').val()
-			var amount = parseFloat(weight) * parseFloat(unit_price)
+			var product_price = _this.find('[name="product_id[]"]').val()
+			var product_calculations = parseFloat(product_price) * parseFloat(weight)
+			var amount = parseFloat(weight) * parseFloat(unit_price) + product_calculations
 			_this.find('[name="amount[]"]').val(amount)
 			_this.find('[name="amount[]"]').siblings('p').html(parseFloat(amount).toLocaleString('en-US', { style: 'decimal', maximumFractionDigits: 2, minimumFractionDigits: 2 }))
 			total += amount;
@@ -317,5 +351,50 @@ if (isset($_GET['id'])) {
 			}
 		})
 	})
+
+	$(document).ready(function () {
+		// When a detergent brand is selected
+		$('#inventory_id').change(function () {
+			var selectedOption = $(this).find(':selected');
+			var size = selectedOption.data('size'); // Get size (e.g., "20 L" or "5 gal")
+			var price = parseFloat(selectedOption.data('price')); // Get price
+			var sizeInMl = 0;
+
+			console.log('Selected Size:', size);
+			console.log('Selected Price:', price);
+
+			// Parse size to get volume in milliliters
+			if (size) {
+				var sizeParts = size.split(' ');
+				var value = parseFloat(sizeParts[0]);
+				var unit = sizeParts[1]?.toLowerCase();
+
+				if (unit === 'l') {
+					sizeInMl = value * 1000; // Convert liters to milliliters
+				} else if (unit === 'ml') {
+					sizeInMl = value;
+				} else if (unit === 'gal') {
+					sizeInMl = value * 3785.41; // Convert gallons to milliliters
+				}
+			}
+
+			console.log('Size in Milliliters:', sizeInMl);
+
+			// Calculate price for 20ml in pesos
+			var pricePer20Ml = (price / sizeInMl) * 20 + 3;
+
+			console.log('Price Per 20ml:', pricePer20Ml);
+
+			// Display price per 20ml
+			if (!isNaN(pricePer20Ml)) {
+				$('#detergent_20ml_price').val(pricePer20Ml.toFixed(2)); // Update unit price field in pesos
+			} else {
+				$('#detergent_20ml_price').val('');
+			}
+		});
+	});
+
+
+
 
 </script>
