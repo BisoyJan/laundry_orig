@@ -94,8 +94,9 @@ if (isset($_GET['id'])) {
 							$inv = $conn->query("SELECT inventory.id, inventory.qty, inventory.used, supply_list.brand, supply_list.category, supply_list.price, supply_list.classification, supply_list.size, supply_list.id as supply_list_id FROM inventory JOIN supply_list ON inventory.supply_id = supply_list.id ORDER BY inventory.id DESC");
 							while ($row = $inv->fetch_assoc()):
 								?>
-								<option value="<?php echo $row['id']; ?>" data-price="<?php echo $row['price']; ?>"
-									data-size="<?php echo $row['size']; ?>">
+								<option value="<?php echo $row['supply_list_id']; ?>"
+									data-price="<?php echo $row['price']; ?>" data-size="<?php echo $row['size']; ?>"
+									data-brand="<?php echo $row['brand'] . " / " . $row['classification']; ?> ">
 									<?php echo $row['brand'] . " / " . $row['classification']; ?>
 								</option>
 							<?php endwhile; ?>
@@ -107,7 +108,6 @@ if (isset($_GET['id'])) {
 				<div class="col-md-5">
 					<div class="form-group">
 						<label for="detergent_20ml_price" class="control-label">Product Unit Price per 20ml/Load</label>
-						<input type="hidden" name="detergent_20ml_price">
 						<input type="number" step="any" value="0" class="form-control text-right"
 							id="detergent_20ml_price" readonly>
 					</div>
@@ -137,7 +137,7 @@ if (isset($_GET['id'])) {
 							<th class="text-center">Category</th>
 							<th class="text-center">Load</th>
 							<th class="text-center">Product</th> <!-- show the product name -->
-							<th class="text-center">Product price</th> <!-- show product price -->
+							<th class="text-center">Product price/Load</th> <!-- show product price -->
 							<th class="text-center">Unit Price</th>
 							<th class="text-center">Amount</th>
 							<th class="text-center"></th>
@@ -146,18 +146,50 @@ if (isset($_GET['id'])) {
 					<tbody>
 						<?php if (isset($_GET['id'])): ?>
 							<?php
-							$list = $conn->query("SELECT * from laundry_items where laundry_id = " . $id);
+							$list = $conn->query("SELECT 
+												li.id AS laundry_item_id,
+												li.laundry_category_id,
+												li.weight,
+												li.product_price,
+												li.unit_price,
+												li.amount,
+												sl.id AS supply_list_id,
+												sl.brand,
+												sl.category,
+												sl.classification,
+												sl.size,
+												sl.price AS supply_price
+											FROM 
+												laundry_items li
+											INNER JOIN 
+												supply_list sl
+											ON 
+												li.supply_list_id = sl.id
+											WHERE 
+												li.laundry_id =" . $id);
 							while ($row = $list->fetch_assoc()):
 								?>
-								<tr data-id="<?php echo $row['id'] ?>">
+								<tr data-id="<?php echo $row['laundry_item_id'] ?>">
 									<td>
-										<input type="hidden" name="item_id[]" value="<?php echo $row['id'] ?>">
+										<input type="hidden" name="item_id[]" value="<?php echo $row['laundry_item_id'] ?>">
 										<input type="hidden" name="laundry_category_id[]"
 											value="<?php echo $row['laundry_category_id'] ?>">
 										<?php echo isset($cname_arr[$row['laundry_category_id']]) ? ucwords($cname_arr[$row['laundry_category_id']]) : '' ?>
 									</td>
-									<td><input type="number" class="text-center" name="weight[]"
-											value="<?php echo $row['weight'] ?>"></td>
+									<td>
+										<input type="number" class="text-center" name="weight[]"
+											value="<?php echo $row['weight'] ?>">
+									</td>
+									<td>
+										<input type="hidden" class="text-center" name="inventory_id[]"
+											value="<?php echo $row['supply_list_id'] ?>">
+										<?php echo $row['brand'] . ' / ' . $row['classification'] ?>
+									</td>
+									<td>
+										<input type="hidden" class="text-center" name="product_price[]"
+											value="<?php echo $row['product_price'] ?>">
+										<?php echo number_format($row['product_price'], 2) ?>
+									</td>
 									<td class="text-right">
 										<input type="hidden" name="unit_price[]" value="<?php echo $row['unit_price'] ?>">
 										<?php echo number_format($row['unit_price'], 2) ?>
@@ -210,7 +242,7 @@ if (isset($_GET['id'])) {
 					<div class="form-group">
 						<label for="tamount" class="control-label">Total Amount</label>
 						<input type="number" step="any" min="1"
-							value="<?php echo isset($total_amount) ? $total_amount : 0 ?>"
+							value="<?php echo isset($total_amount) ? number_format((float) $total_amount, 2) : 0.00 ?>"
 							class="form-control text-right" name="tamount" readonly>
 					</div>
 				</div>
@@ -274,15 +306,16 @@ if (isset($_GET['id'])) {
 			return false;
 		}
 		var price = $('#laundry_category_id option[value="' + cat + '"]').attr('data-price');
+		var productPrice = $('#detergent_20ml_price').val();
 		var cname = $('#laundry_category_id option[value="' + cat + '"]').html();
 		var amount = parseFloat(price) * parseFloat(_weight);
 		var productBrand = $('#inventory_id option[value="' + $('#inventory_id').val() + '"]').html(); // get the product brand
 		var tr = $('<tr></tr>');
 		tr.attr('data-id', cat)
-		tr.append('<input type="hidden" name="item_id[]" id="" value=""><td class=""><input type="hidden" name="laundry_category_id[]" id="" value="' + cat + '">' + cname + '</td>')
+		tr.append('<input type="hidden" name="item_id[]" id="" value=""><td class="text-center"><input type="hidden" name="laundry_category_id[]" id="" value="' + cat + '">' + cname + '</td>')
 		tr.append('<td><input type="number" class="text-center" name="weight[]" id="" value="' + _weight + '"></td>')
 		tr.append('<td class="text-center"><input type="hidden" name="inventory_id[]" id="" value="' + $('#inventory_id').val() + '">' + productBrand + '</td>')
-		tr.append('<td class="text-center"><input type="hidden" name="product_id[]" id="" value="' + $('#detergent_20ml_price').val() + '">' + $('#detergent_20ml_price').val() + '</td>')
+		tr.append('<td class="text-center"><input type="hidden" name="product_price[]" id="" value="' + $('#detergent_20ml_price').val() + '">' + $('#detergent_20ml_price').val() + '</td>')
 		tr.append('<td class="text-right"><input type="hidden" name="unit_price[]" id="" value="' + price + '">' + (parseFloat(price).toLocaleString('en-US', { style: 'decimal', maximumFractionDigits: 2, minimumFractionDigits: 2 })) + '</td>')
 		tr.append('<td class="text-right"><input type="hidden" name="amount[]" id="" value="' + amount + '"><p>' + (parseFloat(amount).toLocaleString('en-US', { style: 'decimal', maximumFractionDigits: 2, minimumFractionDigits: 2 })) + '</p></td>')
 		tr.append('<td><button class="btn btn-sm btn-danger" type="button" onclick="rem_list($(this))"><i class="fa fa-times"></i></button></td>')
@@ -309,7 +342,7 @@ if (isset($_GET['id'])) {
 			var _this = $(this)
 			var weight = _this.find('[name="weight[]"]').val()
 			var unit_price = _this.find('[name="unit_price[]"]').val()
-			var product_price = _this.find('[name="product_id[]"]').val()
+			var product_price = _this.find('[name="product_price[]"]').val()
 			var product_calculations = parseFloat(product_price) * parseFloat(weight)
 			var amount = parseFloat(weight) * parseFloat(unit_price) + product_calculations
 			_this.find('[name="amount[]"]').val(amount)
@@ -349,8 +382,8 @@ if (isset($_GET['id'])) {
 
 				}
 			}
-		})
-	})
+		});
+	});
 
 	$(document).ready(function () {
 		// When a detergent brand is selected

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 16, 2024 at 06:18 AM
+-- Generation Time: Jan 16, 2025 at 03:22 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,7 +42,7 @@ CREATE TABLE `inventory` (
 
 INSERT INTO `inventory` (`id`, `supply_id`, `qty`, `used`, `date_created`, `date_updated`) VALUES
 (14, 1, 273, 50, '2024-12-14 11:44:57', '2024-12-16 10:15:31'),
-(17, 12, 37, 3, '2024-12-16 09:20:33', '2024-12-16 09:20:54');
+(17, 12, 74, 3, '2024-12-16 09:20:33', '2025-01-15 20:24:27');
 
 -- --------------------------------------------------------
 
@@ -74,6 +74,8 @@ CREATE TABLE `laundry_items` (
   `id` int(30) NOT NULL,
   `laundry_category_id` int(30) NOT NULL,
   `weight` double NOT NULL,
+  `supply_list_id` int(11) NOT NULL,
+  `product_price` double NOT NULL,
   `laundry_id` int(30) NOT NULL,
   `unit_price` double NOT NULL,
   `amount` double NOT NULL
@@ -83,8 +85,11 @@ CREATE TABLE `laundry_items` (
 -- Dumping data for table `laundry_items`
 --
 
-INSERT INTO `laundry_items` (`id`, `laundry_category_id`, `weight`, `laundry_id`, `unit_price`, `amount`) VALUES
-(6, 1, 2, 6, 30, 60);
+INSERT INTO `laundry_items` (`id`, `laundry_category_id`, `weight`, `supply_list_id`, `product_price`, `laundry_id`, `unit_price`, `amount`) VALUES
+(17, 3, 1, 1, 3.12, 21, 25, 28.12),
+(18, 1, 1, 1, 3.12, 21, 30, 33.12),
+(20, 1, 1, 12, 6.6, 25, 30, 36.6),
+(21, 3, 1, 1, 3.12, 25, 25, 28.12);
 
 -- --------------------------------------------------------
 
@@ -111,8 +116,8 @@ CREATE TABLE `laundry_list` (
 --
 
 INSERT INTO `laundry_list` (`id`, `customer_name`, `phone`, `status`, `queue`, `total_amount`, `pay_status`, `amount_tendered`, `amount_change`, `remarks`, `date_created`) VALUES
-(4, 'Claire Blake', '01231321312', 3, 1, 0, 1, 500, 250, 'None', '2020-09-23 13:29:33'),
-(6, 'Intong', '09287012470', 2, 1, 60, 1, 100, 40, '', '2024-12-16 11:34:55');
+(21, 'sadsdas', '21321321', 0, 2, 61.239999999999995, 0, 0, -61.24, '', '2025-01-16 10:06:03'),
+(25, '21313', '1213213213', 0, 3, 64.72, 0, 0, -64.72, '', '2025-01-16 10:15:14');
 
 -- --------------------------------------------------------
 
@@ -136,7 +141,7 @@ CREATE TABLE `supply_list` (
 INSERT INTO `supply_list` (`id`, `brand`, `category`, `classification`, `size`, `price`) VALUES
 (1, 'Downy', 'Alkaline Builder Detergent', 'Fragrance', '20 L', 120),
 (10, 'Tide', 'Laundry Soaps', 'Cleaning Agent', '20 L', 530),
-(12, 'Pride', 'Laundry Soaps', 'Cleaning Agent', '20 L', 300);
+(12, 'Pride', 'Laundry Soaps', 'Cleaning Agent', '20 L', 3600);
 
 -- --------------------------------------------------------
 
@@ -220,13 +225,13 @@ ALTER TABLE `laundry_categories`
 -- AUTO_INCREMENT for table `laundry_items`
 --
 ALTER TABLE `laundry_items`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `laundry_list`
 --
 ALTER TABLE `laundry_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `supply_list`

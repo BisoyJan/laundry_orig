@@ -1,6 +1,7 @@
 <?php
 session_start();
 ini_set('display_errors', 1);
+error_reporting(E_ALL);
 class Action
 {
 	private $db;
@@ -185,6 +186,16 @@ class Action
 	function save_laundry()
 	{
 		extract($_POST);
+
+		// Define default values for variables if not set
+		$customer_name = isset($customer_name) ? $customer_name : '';
+		$phone = isset($phone) ? $phone : '';
+		$remarks = isset($remarks) ? $remarks : '';
+		$tamount = isset($tamount) ? $tamount : 0;
+		$tendered = isset($tendered) ? $tendered : 0;
+		$change = isset($change) ? $change : 0;
+		$weight = isset($weight) ? $weight : [];
+
 		$data = " customer_name = '$customer_name' ";
 		$data .= ", phone = '$phone' ";
 		$data .= ", remarks = '$remarks' ";
@@ -224,8 +235,14 @@ class Action
 					$items .= ", laundry_category_id = '$laundry_category_id[$key]' ";
 					$items .= ", weight = '$weight[$key]' ";
 					$items .= ", unit_price = '$unit_price[$key]' ";
+					$items .= ", supply_list_id = '$inventory_id[$key]' ";
+					$items .= ", product_price = '$product_price[$key]' ";
 					$items .= ", amount = '$amount[$key]' ";
 					$save2 = $this->db->query("INSERT INTO laundry_items SET " . $items);
+				}
+				if (!$save) {
+					echo "SQL Error: " . $conn->error;
+					return $save2;
 				}
 				return 1;
 			}
@@ -233,23 +250,33 @@ class Action
 			// Update existing record
 			$save = $this->db->query("UPDATE laundry_list SET " . $data . " WHERE id=" . $id);
 			if ($save) {
-				$this->db->query("DELETE FROM laundry_items WHERE id NOT IN (" . implode(',', $item_id) . ")");
+				$this->db->query("DELETE FROM laundry_items WHERE laundry_id = " . $id . " AND id NOT IN (" . implode(',', array_filter($item_id)) . ")");
+
 				foreach ($weight as $key => $value) {
 					$items = " laundry_id = '$id' ";
 					$items .= ", laundry_category_id = '$laundry_category_id[$key]' ";
 					$items .= ", weight = '$weight[$key]' ";
 					$items .= ", unit_price = '$unit_price[$key]' ";
+					$items .= ", supply_list_id = '$inventory_id[$key]' ";
+					$items .= ", product_price = '$product_price[$key]' ";
 					$items .= ", amount = '$amount[$key]' ";
+
 					if (empty($item_id[$key])) {
 						$save2 = $this->db->query("INSERT INTO laundry_items SET " . $items);
 					} else {
 						$save2 = $this->db->query("UPDATE laundry_items SET " . $items . " WHERE id=" . $item_id[$key]);
+
+						if (!$save || !$save2) {
+							echo "SQL Error: " . $this->db->error;
+							return false;
+						}
 					}
 				}
-				return 1;
+				return 2;
 			}
 		}
 	}
+
 
 	// function save_laundry()
 	// {
