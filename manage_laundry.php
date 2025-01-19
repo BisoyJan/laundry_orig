@@ -241,8 +241,8 @@ if (isset($_GET['id'])) {
 				<div class="col-md-4">
 					<div class="form-group">
 						<label for="tamount" class="control-label">Total Amount</label>
-						<input type="number" step="any" min="1"
-							value="<?php echo isset($total_amount) ? number_format((float) $total_amount, 2) : 0.00 ?>"
+						<input type="text"
+							value="<?php echo isset($total_amount) ? number_format((float) $total_amount, 2, '.', '') : '0.00' ?>"
 							class="form-control text-right" name="tamount" readonly>
 					</div>
 				</div>

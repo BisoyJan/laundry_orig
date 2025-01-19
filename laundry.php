@@ -84,6 +84,7 @@ if (isset($_GET['id'])) {
 			<p><strong>Customer Name:</strong> <span id="customer_name" style="font-weight: normal;"></span></p>
 			<p><strong>Phone:</strong> <span id="phone" style="font-weight: normal;"></span></p>
 			<p><strong>Status:</strong> <span id="status" style="font-weight: normal;"></span></p>
+			<p><strong>Payment Status:</strong> <span id="payment_status" style="font-weight: normal;"></span></p>
 
 			<table border="1" cellpadding="5" cellspacing="0"
 				style="width: 100%; border-collapse: collapse; margin-top: 20px;">
@@ -135,6 +136,7 @@ if (isset($_GET['id'])) {
 				document.getElementById('total_amount').innerText = data.total_amount;
 				document.getElementById('amount_tendered').innerText = data.amount_tendered;
 				document.getElementById('amount_change').innerText = data.amount_change;
+				document.getElementById('payment_status').innerText = data.payment_status;
 
 				// Add current date to the receipt
 				document.getElementById('receipt-date').innerText = new Date().toLocaleString();

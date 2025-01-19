@@ -1,13 +1,10 @@
-<?php
-
-?>
-
 <div class="container-fluid">
 
 	<div class="row">
 		<div class="col-lg-12">
-			<button class="btn btn-primary float-right btn-sm" id="new_user"><i class="fa fa-plus"></i> New
-				user</button>
+			<button class="btn btn-primary float-right btn-sm" id="new_user"><i class="fa fa-plus"></i>
+				New user
+			</button>
 		</div>
 	</div>
 	<br>
@@ -20,6 +17,7 @@
 							<th class="text-center">#</th>
 							<th class="text-center">Name</th>
 							<th class="text-center">Username</th>
+							<th class="text-center">Status</th>
 							<th class="text-center">Action</th>
 						</tr>
 					</thead>
@@ -39,6 +37,9 @@
 								</td>
 								<td>
 									<?php echo $row['username'] ?>
+								</td>
+								<td class="text-center">
+									<?php echo $row['type'] == 1 ? '<span class="badge badge-success">ADMIN</span>' : '<span class="badge badge-info">STAFF</span>' ?>
 								</td>
 								<td>
 									<center>

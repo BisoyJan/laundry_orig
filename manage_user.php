@@ -29,19 +29,31 @@ if (isset($_GET['id'])) {
 				value="<?php echo isset($meta['password']) ? $meta['password'] : '' ?>" required>
 		</div>
 		<div class="form-group">
-			<label for="type">User Type</label>
-			<select name="type" id="type" class="custom-select">
-				<option value="1" <?php echo isset($meta['type']) && $meta['type'] == 1 ? 'selected' : '' ?>>Admin
-				</option>
-				<option value="2" <?php echo isset($meta['type']) && $meta['type'] == 2 ? 'selected' : '' ?>>Staff
-				</option>
-			</select>
+			<label for="cpassword">Confirm Password</label>
+			<input type="password" name="cpassword" id="cpassword" class="form-control"
+				value="<?php echo isset($meta['password']) ? $meta['password'] : '' ?>" required>
+			<span id="cpassword-msg"></span>
 		</div>
+		<?php if (!isset($meta['type']) || $meta['type'] != 1): ?>
+			<div class="form-group">
+				<label for="type">User Type</label>
+				<select name="type" id="type" class="custom-select">
+					<option value="1" <?php echo isset($meta['type']) && $meta['type'] == 1 ? 'selected' : '' ?>>Admin
+					</option>
+					<option value="2" <?php echo isset($meta['type']) && $meta['type'] == 2 ? 'selected' : '' ?>>Staff
+					</option>
+				</select>
+			</div>
+		<?php endif; ?>
 	</form>
 </div>
 <script>
 	$('#manage-user').submit(function (e) {
 		e.preventDefault();
+		if ($('#password').val() != $('#cpassword').val()) {
+			$('#cpassword-msg').html('<span class="text-danger">Password does not match.</span>');
+			return false;
+		}
 		start_load()
 		$.ajax({
 			url: 'ajax.php?action=save_user',

@@ -22,6 +22,7 @@ if (isset($_GET['id'])) {
                 li.weight,
                 li.unit_price,
                 li.amount,
+                ll.pay_status,
                 lc.id AS category_id,
                 lc.name AS category_name,
                 lc.price AS category_price
@@ -44,9 +45,10 @@ if (isset($_GET['id'])) {
         'customer_name' => $laundry['customer_name'],
         'phone' => $laundry['phone'],
         'status' => ($laundry['status'] == 0) ? 'Pending' : ($laundry['status'] == 1 ? 'Processing' : ($laundry['status'] == 2 ? 'Ready to be Claim' : 'Claimed')),
-        'total_amount' => $laundry['total_amount'],
-        'amount_tendered' => $laundry['amount_tendered'],
-        'amount_change' => $laundry['amount_change'],
+        'total_amount' => number_format($laundry['total_amount'], 2),
+        'amount_tendered' => number_format($laundry['amount_tendered'], 2),
+        'amount_change' => number_format($laundry['amount_change'], 2),
+        'payment_status' => ($laundry['pay_status'] == 0) ? 'Pending' : 'Paid',
         'items' => $items
     ];
 
