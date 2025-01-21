@@ -57,7 +57,7 @@ if (isset($_GET['id'])) {
 											<button type="button" class="btn btn-outline-danger btn-sm delete_laundry"
 												data-id="<?php echo $row['id'] ?>">Delete</button>
 											<!-- Print Receipt Button: Visible if status is 2 (Ready to be Claim) or 3 (Claimed) -->
-											<?php if ($row['status'] == 2 || $row['status'] == 3): ?>
+											<?php if ($row['status'] == 3): ?>
 												<button type="button" class="btn btn-outline-success btn-sm"
 													onclick="printReceipt(<?php echo $row['id']; ?>)">Print Receipt</button>
 											<?php endif; ?>
