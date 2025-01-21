@@ -6,8 +6,8 @@ if (isset($_GET['id'])) {
 		$$k = $v;
 	}
 }
-
 ?>
+
 <div class="container-fluid">
 	<form action="" id="manage-supply">
 		<input type="hidden" name="id" value="<?php echo isset($_GET['id']) ? $_GET['id'] : '' ?>">
@@ -19,7 +19,8 @@ if (isset($_GET['id'])) {
 					$supply = $conn->query("SELECT * FROM supply_list order by brand asc");
 					while ($row = $supply->fetch_assoc()):
 						?>
-						<option value="<?php echo $row['id'] ?>" <?php echo isset($supply_id) && $supply_id == $row['id'] ? "selected" : '' ?>><?php echo $row['brand'] ?> -
+						<option value="<?php echo $row['id'] ?>" <?php echo isset($supply_id) && $supply_id == $row['id'] ? "selected" : '' ?>>
+							<?php echo $row['brand'] ?> -
 							<?php echo $row['category'] ?>/<?php echo $row['classification'] ?>
 						</option>
 					<?php endwhile; ?>
@@ -49,13 +50,13 @@ if (isset($_GET['id'])) {
 
 <script>
 	$('#manage-inv').submit(function (e) {
-		e.preventDefault()
-		start_load()
-		var id = $('[name="id"]').val()
-		var supply_id = $('[name="supply_id"]').val()
-		var qty = $('[name="qty"]').val()
-		var used = $('[name="used"]').val()
-		var stock_type = $('[name="stock_type"]').val()
+		e.preventDefault();
+		start_load();
+		var id = $('[name="id"]').val();
+		var supply_id = $('[name="supply_id"]').val();
+		var qty = $('[name="qty"]').val();
+		var used = $('[name="used"]').val();
+		var stock_type = $('[name="stock_type"]').val();
 		$.ajax({
 			url: 'ajax.php?action=save_inv',
 			method: 'POST',
@@ -68,15 +69,21 @@ if (isset($_GET['id'])) {
 			},
 			success: function (resp) {
 				if (resp == 1) {
-					alert_toast("Data successfully saved", 'success')
+					alert_toast("Data successfully saved", 'success');
 					setTimeout(function () {
-						location.reload()
-					}, 1000)
+						location.reload();
+					}, 1000);
+				} else {
+					alert_toast("Error saving data", 'danger');
 				}
+			},
+			error: function (err) {
+				console.log(err);
+				alert_toast("An error occurred", 'danger');
 			}
-		})
+		});
+	});
 
-	})
 	$(document).ready(function () {
 		var stockType = $('[name="stock_type"]').val();
 		if (stockType == 1) {
@@ -98,5 +105,4 @@ if (isset($_GET['id'])) {
 			$('[name="used"]').attr('disabled', false);
 		}
 	});
-
 </script>

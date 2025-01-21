@@ -62,6 +62,11 @@
 </div>
 <script>
 
+	$(document).ready(function () {
+		$('table').dataTable()
+	})
+
+
 	$('#new_user').click(function () {
 		uni_modal('New User', 'manage_user.php')
 	})

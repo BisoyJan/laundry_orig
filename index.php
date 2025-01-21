@@ -87,6 +87,7 @@ if (!isset($_SESSION['login_id']))
           <h5 class="modal-title"></h5>
         </div>
         <div class="modal-body">
+          <!-- Content will be loaded here -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" id='submit'
@@ -134,28 +135,32 @@ if (!isset($_SESSION['login_id']))
     }
 
     window.uni_modal = function ($title = '', $url = '', $size = "") {
-      start_load()
+      start_load();
       $.ajax({
         url: $url,
         error: err => {
           console.log(err);
-          alert("An error occurred");
+          alert("An error occurred while loading the content.");
+          end_load();
         },
         success: function (resp) {
           if (resp) {
-            $('#uni_modal .modal-title').html($title)
-            $('#uni_modal .modal-body').html(resp)
+            $('#uni_modal .modal-title').html($title);
+            $('#uni_modal .modal-body').html(resp);
             if ($size != '') {
-              $('#uni_modal .modal-dialog').addClass($size)
+              $('#uni_modal .modal-dialog').addClass($size);
             } else {
-              $('#uni_modal .modal-dialog').removeAttr("class").addClass("modal-dialog modal-md")
+              $('#uni_modal .modal-dialog').removeAttr("class").addClass("modal-dialog modal-md");
             }
-            $('#uni_modal').modal('show')
-            end_load()
+            $('#uni_modal').modal('show');
+            end_load();
+          } else {
+            alert("No content returned from the server.");
+            end_load();
           }
         }
-      })
-    }
+      });
+    };
   </script>
 
 </body>

@@ -1,4 +1,5 @@
 <?php include 'db_connect.php' ?>
+
 <div class="container-fluid">
 	<div class="col-lg-12">
 		<div class="row">
@@ -42,7 +43,8 @@
 				<div class="card">
 					<div class="card-header">
 						<b>Supply In-used List</b>
-						<button class="btn btn-primary btn-sm float-right" id="manage-supply">Manage Supply</button>
+						<button class="btn btn-primary btn-sm float-right manage-supply" id="manage-supply">Manage
+							Supply</button>
 					</div>
 					<div class="card-body">
 						<table class="table table-bordered">
@@ -90,10 +92,14 @@
 
 
 <script>
-	$('table').dataTable()
-	$('#manage-supply').click(function () {
-		uni_modal("Manage Supply", "manage_inv.php")
+	$(document).ready(function () {
+		$('table').dataTable()
 	})
+
+	$('#manage-supply').click(function () {
+		console.log("Manage Supply button clicked");
+		uni_modal("Manage Supply", "manage_inv.php");
+	});
 	$('.edit_stock').click(function () {
 		uni_modal("Manage Supply", "manage_inv.php?id=" + $(this).attr('data-id'))
 	})

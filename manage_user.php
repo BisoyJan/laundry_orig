@@ -47,6 +47,7 @@ if (isset($_GET['id'])) {
 		<?php endif; ?>
 	</form>
 </div>
+
 <script>
 	$('#manage-user').submit(function (e) {
 		e.preventDefault();
