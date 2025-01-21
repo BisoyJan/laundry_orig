@@ -22,7 +22,11 @@ class Action
 	function login()
 	{
 		extract($_POST);
-		$qry = $this->db->query("SELECT * FROM users where username = '" . $username . "' and password = '" . $password . "' ");
+
+		// Hash the input password
+		$hashed_password = md5($password);
+
+		$qry = $this->db->query("SELECT * FROM users WHERE username = '$username' AND password = '$hashed_password'");
 		if ($qry->num_rows > 0) {
 			foreach ($qry->fetch_array() as $key => $value) {
 				if ($key != 'password' && !is_numeric($key))
@@ -70,23 +74,30 @@ class Action
 	{
 		extract($_POST);
 
-		var_dump("POST data:", $_POST);
-
-		// Set default value for type if not provided
-		if (!isset($type)) {
-			$type = 2; // Default to 'Staff' if type is not provided
+		// Ensure all required fields are present
+		if (empty($name) || empty($username) || empty($type)) {
+			return "Error: Missing required fields.";
 		}
 
+		// Prepare the data for the query
 		$data = " name = '$name' ";
 		$data .= ", username = '$username' ";
 		$data .= ", type = '$type' ";
 
-		// Check if the old password is provided and correct
+		// Check if the old password is provided and correct (for password change)
 		if (!empty($old_password)) {
 			$user = $this->db->query("SELECT * FROM users WHERE id = '$id'");
 			if ($user->num_rows > 0) {
 				$user_data = $user->fetch_assoc();
-				if ($user_data['password'] != md5($old_password)) { // Assuming password is stored as md5 hash
+
+				// Hash the input old password before comparing
+				$hashed_old_password = md5($old_password);
+
+				// Debugging: Print the stored password and hashed input password
+				echo "Stored Password: " . $user_data['password'] . "<br>";
+				echo "Hashed Input Password: " . $hashed_old_password . "<br>";
+
+				if ($user_data['password'] != $hashed_old_password) {
 					return 2; // Old password is incorrect
 				}
 			} else {
@@ -99,22 +110,20 @@ class Action
 			$data .= ", password = '" . md5($password) . "' "; // Hash the new password
 		}
 
+		// Insert or update the user
 		if (empty($id)) {
 			$query = "INSERT INTO users SET " . $data;
 		} else {
 			$query = "UPDATE users SET " . $data . " WHERE id = " . $id;
 		}
 
-		var_dump("Query:", $query);
-
+		// Execute the query
 		$save = $this->db->query($query);
 
 		if ($save) {
-
-			return 1;
+			return 1; // Success
 		} else {
-			var_dump("SQL Error:", $this->db->error);
-			return 0;
+			return "Error: " . $this->db->error; // SQL error
 		}
 	}
 

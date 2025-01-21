@@ -35,19 +35,15 @@ if (isset($_GET['id'])) {
 			<input type="password" name="cpassword" id="cpassword" class="form-control" required>
 			<span id="cpassword-msg"></span>
 		</div>
-		<?php if (!isset($meta['type']) || $meta['type'] != 1): ?>
-			<div class="form-group">
-				<label for="type">User Type</label>
-				<select name="type" id="type" class="custom-select">
-					<option value="1" <?php echo isset($meta['type']) && $meta['type'] == 1 ? 'selected' : '' ?>>Admin
-					</option>
-					<option value="2" <?php echo isset($meta['type']) && $meta['type'] == 2 ? 'selected' : '' ?>>Staff
-					</option>
-				</select>
-			</div>
-		<?php else: ?>
-			<input type="hidden" name="type" value="<?php echo isset($meta['type']) ? $meta['type'] : '' ?>">
-		<?php endif; ?>
+		<div class="form-group">
+			<label for="type">User Type</label>
+			<select name="type" id="type" class="custom-select">
+				<option value="1" <?php echo isset($meta['type']) && $meta['type'] == 1 ? 'selected' : '' ?>>Admin
+				</option>
+				<option value="2" <?php echo isset($meta['type']) && $meta['type'] == 2 ? 'selected' : '' ?>>Staff
+				</option>
+			</select>
+		</div>
 	</form>
 </div>
 
@@ -71,11 +67,11 @@ if (isset($_GET['id'])) {
 					}, 1500);
 				} else if (resp == 2) {
 					alert_toast("Old password is incorrect", 'error');
+					end_load();
 				} else if (resp == 3) {
 					alert_toast("User not found", 'error');
 				} else {
-					alert_toast("Error saving data. Please check the console for details.", 'error');
-					console.log(resp); // Log the response for debugging
+					alert_toast("Error saving data: " + resp, 'error');
 				}
 			}
 		});
