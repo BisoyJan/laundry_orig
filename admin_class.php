@@ -69,18 +69,58 @@ class Action
 	function save_user()
 	{
 		extract($_POST);
+
+		var_dump("POST data:", $_POST);
+
+		// Set default value for type if not provided
+		if (!isset($type)) {
+			$type = 2; // Default to 'Staff' if type is not provided
+		}
+
 		$data = " name = '$name' ";
 		$data .= ", username = '$username' ";
-		$data .= ", password = '$password' ";
 		$data .= ", type = '$type' ";
+
+		// Check if the old password is provided and correct
+		if (!empty($old_password)) {
+			$user = $this->db->query("SELECT * FROM users WHERE id = '$id'");
+			if ($user->num_rows > 0) {
+				$user_data = $user->fetch_assoc();
+				if ($user_data['password'] != md5($old_password)) { // Assuming password is stored as md5 hash
+					return 2; // Old password is incorrect
+				}
+			} else {
+				return 3; // User not found
+			}
+		}
+
+		// Update the password if a new one is provided
+		if (!empty($password)) {
+			$data .= ", password = '" . md5($password) . "' "; // Hash the new password
+		}
+
 		if (empty($id)) {
-			$save = $this->db->query("INSERT INTO users set " . $data);
+			$query = "INSERT INTO users SET " . $data;
 		} else {
-			$save = $this->db->query("UPDATE users set " . $data . " where id = " . $id);
+			$query = "UPDATE users SET " . $data . " WHERE id = " . $id;
 		}
+
+		var_dump("Query:", $query);
+
+		$save = $this->db->query($query);
+
 		if ($save) {
+
 			return 1;
+		} else {
+			var_dump("SQL Error:", $this->db->error);
+			return 0;
 		}
+	}
+
+	function console_log($message, $data = [])
+	{
+		echo "<script>console.log('" . $message . "', " . json_encode($data) . ")</script>";
 	}
 	function signup()
 	{

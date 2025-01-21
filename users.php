@@ -45,7 +45,7 @@
 									<center>
 										<button type="button" class="btn btn-primary edit_user" href="javascript:void(0)"
 											data-id='<?php echo $row['id'] ?>'>Edit</button>
-										<?php if ($row['name'] != 'Administrator' || $row['username'] != 'admin'): ?>
+										<?php if ($row['type'] != '1'): ?>
 											<button type="button" class="btn btn-danger delete_user" href="javascript:void(0)"
 												data-id='<?php echo $row['id'] ?>'>Delete</button>
 										<?php endif; ?>
@@ -65,7 +65,6 @@
 	$(document).ready(function () {
 		$('table').dataTable()
 	})
-
 
 	$('#new_user').click(function () {
 		uni_modal('New User', 'manage_user.php')
