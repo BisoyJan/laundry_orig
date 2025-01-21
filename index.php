@@ -7,6 +7,8 @@
   <title>Quick Laundry Shop Management System</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- DataTables CSS -->
+  <link href="assets/DataTables/datatables.min.css" rel="stylesheet">
   <!-- Other CSS files -->
   <link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
   <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
@@ -15,19 +17,16 @@
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
-  <link href="assets/DataTables/datatables.min.css" rel="stylesheet">
   <link href="assets/css/select2.min.css" rel="stylesheet">
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
   <link type="text/css" rel="stylesheet" href="assets/css/jquery-te-1.4.0.css">
 </head>
 
-
 <?php
 session_start();
 if (!isset($_SESSION['login_id']))
   header('location:login.php');
-include('./header.php');
 // include('./auth.php'); 
 ?>
 
@@ -101,6 +100,8 @@ include('./header.php');
   <!-- jQuery and Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+  <!-- DataTables JS -->
+  <script src="assets/DataTables/datatables.min.js"></script>
   <!-- Other JS files -->
   <script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
@@ -112,6 +113,14 @@ include('./header.php');
   <script src="assets/js/select2.min.js"></script>
   <script src="assets/font-awesome/js/all.min.js"></script>
   <script src="assets/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+
+  <!-- Your custom scripts -->
+  <script>
+    $(document).ready(function () {
+      console.log($.fn.dataTable); // Debug: Check if DataTables is available
+      $('table').dataTable();
+    });
+  </script>
 
   <!-- Your custom scripts -->
   <script>

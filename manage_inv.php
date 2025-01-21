@@ -9,7 +9,7 @@ if (isset($_GET['id'])) {
 
 ?>
 <div class="container-fluid">
-	<form action="" id="manage-inv">
+	<form action="" id="manage-supply">
 		<input type="hidden" name="id" value="<?php echo isset($_GET['id']) ? $_GET['id'] : '' ?>">
 		<div class="form-group">
 			<div class="form-group">
