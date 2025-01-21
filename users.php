@@ -43,23 +43,12 @@
 								</td>
 								<td>
 									<center>
-										<div class="btn-group">
-											<button type="button" class="btn btn-primary">Action</button>
-											<button type="button"
-												class="btn btn-primary dropdown-toggle dropdown-toggle-split"
-												data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-												<span class="sr-only">Toggle Dropdown</span>
-											</button>
-											<div class="dropdown-menu">
-												<a class="dropdown-item edit_user" href="javascript:void(0)"
-													data-id='<?php echo $row['id'] ?>'>Edit</a>
-												<?php if ($row['name'] != 'Administrator' || $row['username'] != 'admin'): ?>
-													<div class="dropdown-divider"></div>
-													<a class="dropdown-item delete_user" href="javascript:void(0)"
-														data-id='<?php echo $row['id'] ?>'>Delete</a>
-												<?php endif; ?>
-											</div>
-										</div>
+										<button type="button" class="btn btn-primary edit_user" href="javascript:void(0)"
+											data-id='<?php echo $row['id'] ?>'>Edit</button>
+										<?php if ($row['name'] != 'Administrator' || $row['username'] != 'admin'): ?>
+											<button type="button" class="btn btn-danger delete_user" href="javascript:void(0)"
+												data-id='<?php echo $row['id'] ?>'>Delete</button>
+										<?php endif; ?>
 									</center>
 								</td>
 							</tr>

@@ -77,7 +77,7 @@
 <script>
 	// JavaScript to add ' active' class based on current page $(document).ready(function () { var
 	page = "<?php echo isset($_GET['page']) ? $_GET['page'] : 'home'; ?>"; $('.nav-item').removeClass('active');
-	$('.nav-' + page).addClass('active'); }); </script>
+	$('.nav-' + page).addClass('active'); </script>
 
 <?php if ($_SESSION['login_type'] == 2): ?>
 	<style>
