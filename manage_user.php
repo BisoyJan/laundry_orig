@@ -22,10 +22,13 @@ if (isset($_GET['id'])) {
 				value="<?php echo isset($meta['username']) ? $meta['username'] : '' ?>"
 				oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" required>
 		</div>
-		<div class="form-group">
-			<label for="old_password">Old Password</label>
-			<input type="password" name="old_password" id="old_password" class="form-control" required>
-		</div>
+		<?php if (isset($meta['id'])): ?>
+			<!-- Show Old Password field only when editing an existing user -->
+			<div class="form-group">
+				<label for="old_password">Old Password</label>
+				<input type="password" name="old_password" id="old_password" class="form-control" required>
+			</div>
+		<?php endif; ?>
 		<div class="form-group">
 			<label for="password">New Password</label>
 			<input type="password" name="password" id="password" class="form-control" required>

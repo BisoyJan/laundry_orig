@@ -85,17 +85,13 @@ class Action
 		$data .= ", type = '$type' ";
 
 		// Check if the old password is provided and correct (for password change)
-		if (!empty($old_password)) {
+		if (!empty($id) && !empty($old_password)) {
 			$user = $this->db->query("SELECT * FROM users WHERE id = '$id'");
 			if ($user->num_rows > 0) {
 				$user_data = $user->fetch_assoc();
 
 				// Hash the input old password before comparing
 				$hashed_old_password = md5($old_password);
-
-				// Debugging: Print the stored password and hashed input password
-				echo "Stored Password: " . $user_data['password'] . "<br>";
-				echo "Hashed Input Password: " . $hashed_old_password . "<br>";
 
 				if ($user_data['password'] != $hashed_old_password) {
 					return 2; // Old password is incorrect

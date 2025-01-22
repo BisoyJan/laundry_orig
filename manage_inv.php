@@ -1,108 +1,83 @@
 <?php
-include 'db_connect.php';
+include('db_connect.php');
 if (isset($_GET['id'])) {
-	$qry = $conn->query("SELECT * FROM inventory where id=" . $_GET['id']);
-	foreach ($qry->fetch_assoc() as $k => $v) {
-		$$k = $v;
+	$user = $conn->query("SELECT * FROM users where id =" . $_GET['id']);
+	foreach ($user->fetch_array() as $k => $v) {
+		$meta[$k] = $v;
 	}
+
 }
 ?>
-
 <div class="container-fluid">
-	<form action="" id="manage-supply">
-		<input type="hidden" name="id" value="<?php echo isset($_GET['id']) ? $_GET['id'] : '' ?>">
+	<form action="" id="manage-user">
+		<input type="hidden" name="id" value="<?php echo isset($meta['id']) ? $meta['id'] : '' ?>">
 		<div class="form-group">
+			<label for="name">Name</label>
+			<input type="text" name="name" id="name" class="form-control"
+				value="<?php echo isset($meta['name']) ? $meta['name'] : '' ?>"
+				oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" required>
+		</div>
+		<div class="form-group">
+			<label for="username">Username</label>
+			<input type="text" name="username" id="username" class="form-control"
+				value="<?php echo isset($meta['username']) ? $meta['username'] : '' ?>"
+				oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" required>
+		</div>
+		<?php if (isset($meta['id'])): ?>
+			<!-- Show Old Password field only when editing an existing user -->
 			<div class="form-group">
-				<label for="" class="control-label">Supply Name</label>
-				<select class="custom-select browser-default" name="supply_id">
-					<?php
-					$supply = $conn->query("SELECT * FROM supply_list order by brand asc");
-					while ($row = $supply->fetch_assoc()):
-						?>
-						<option value="<?php echo $row['id'] ?>" <?php echo isset($supply_id) && $supply_id == $row['id'] ? "selected" : '' ?>>
-							<?php echo $row['brand'] ?> -
-							<?php echo $row['category'] ?>/<?php echo $row['classification'] ?>
-						</option>
-					<?php endwhile; ?>
-				</select>
+				<label for="old_password">Old Password</label>
+				<input type="password" name="old_password" id="old_password" class="form-control" required>
 			</div>
-			<div class="form-group">
-				<label for="" class="control-label">Quantity</label>
-				<input type="number" step="any" min="1" value="<?php echo isset($qty) ? $qty : 1 ?>"
-					class="form-control text-right" name="qty">
-			</div>
-			<div class="form-group">
-				<label for="" class="control-label">In used</label>
-				<input type="number" step="any" min="1" value="<?php echo isset($used) ? $used : 0 ?>"
-					class="form-control text-right" name="used">
-			</div>
-			<div class="form-group">
-				<label for="" class="control-label">Type</label>
-				<select name="stock_type" id="" class="custom-select browser-default">
-					<option value="1" <?php echo isset($stock_type) && $stock_type == 1 ? "selected" : '' ?>>Stock In
-					</option>
-					<option value="2" <?php echo isset($stock_type) && $stock_type == 2 ? "selected" : '' ?>>Use</option>
-				</select>
-			</div>
+		<?php endif; ?>
+		<div class="form-group">
+			<label for="password">New Password</label>
+			<input type="password" name="password" id="password" class="form-control" required>
+		</div>
+		<div class="form-group">
+			<label for="cpassword">Confirm New Password</label>
+			<input type="password" name="cpassword" id="cpassword" class="form-control" required>
+			<span id="cpassword-msg"></span>
+		</div>
+		<div class="form-group">
+			<label for="type">User Type</label>
+			<select name="type" id="type" class="custom-select">
+				<option value="1" <?php echo isset($meta['type']) && $meta['type'] == 1 ? 'selected' : '' ?>>Admin
+				</option>
+				<option value="2" <?php echo isset($meta['type']) && $meta['type'] == 2 ? 'selected' : '' ?>>Staff
+				</option>
+			</select>
 		</div>
 	</form>
 </div>
 
 <script>
-	$('#manage-inv').submit(function (e) {
+	$('#manage-user').submit(function (e) {
 		e.preventDefault();
+		if ($('#password').val() != $('#cpassword').val()) {
+			$('#cpassword-msg').html('<span class="text-danger">New passwords do not match.</span>');
+			return false;
+		}
 		start_load();
-		var id = $('[name="id"]').val();
-		var supply_id = $('[name="supply_id"]').val();
-		var qty = $('[name="qty"]').val();
-		var used = $('[name="used"]').val();
-		var stock_type = $('[name="stock_type"]').val();
 		$.ajax({
-			url: 'ajax.php?action=save_inv',
+			url: 'ajax.php?action=save_user',
 			method: 'POST',
-			data: {
-				id: id,
-				supply_id: supply_id,
-				qty: qty,
-				used: used,
-				stock_type: stock_type
-			},
+			data: $(this).serialize(),
 			success: function (resp) {
 				if (resp == 1) {
 					alert_toast("Data successfully saved", 'success');
 					setTimeout(function () {
 						location.reload();
-					}, 1000);
+					}, 1500);
+				} else if (resp == 2) {
+					alert_toast("Old password is incorrect", 'error');
+					end_load();
+				} else if (resp == 3) {
+					alert_toast("User not found", 'error');
 				} else {
-					alert_toast("Error saving data", 'danger');
+					alert_toast("Error saving data: " + resp, 'error');
 				}
-			},
-			error: function (err) {
-				console.log(err);
-				alert_toast("An error occurred", 'danger');
 			}
 		});
-	});
-
-	$(document).ready(function () {
-		var stockType = $('[name="stock_type"]').val();
-		if (stockType == 1) {
-			$('[name="qty"]').attr('disabled', false);
-			$('[name="used"]').attr('disabled', true);
-		} else {
-			$('[name="qty"]').attr('disabled', true);
-			$('[name="used"]').attr('disabled', false);
-		}
-	});
-
-	$('#manage-inv').on('change', '[name="stock_type"]', function () {
-		var stockType = $(this).val();
-		if (stockType == 1) {
-			$('[name="qty"]').attr('disabled', false);
-			$('[name="used"]').attr('disabled', true);
-		} else {
-			$('[name="qty"]').attr('disabled', true);
-			$('[name="used"]').attr('disabled', false);
-		}
 	});
 </script>
